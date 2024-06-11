@@ -1,6 +1,6 @@
 import React from "react";
 import NavigationBar from "./Navbar.jsx";
-import HomeTabel from "./HomeTable.jsx";
+
 
 function Home() {
   return (
