@@ -8,7 +8,7 @@ const LoginSignup = () => {
   const [formData,setFormData] = useState({username:"",email:"",password:""});
 
   function loginToast(){
-    toast.success("Thank you for registration");
+    toast.success("Welcome");
   }
 
   const changeHandler = (e) => {
@@ -31,7 +31,9 @@ const LoginSignup = () => {
       if (dataObj.success) {
         loginToast();
         localStorage.setItem('auth-token',dataObj.token);
-        window.location.replace("/");
+        setTimeout(() => {
+          window.location.replace("/");
+      }, 2000);
       }
       else
       {
