@@ -27,6 +27,7 @@ function NavigationBar() {
         <li><Link to="/" style={{ textDecoration: "none", color:"black" }}>All</Link></li>
         <li><Link to="/Men" style={{ textDecoration: "none", color:"black" }}>Men</Link></li>
         <li><Link to="/Female" style={{ textDecoration: "none", color:"black" }}>Women</Link></li>
+        <li><Link to="/Product" style={{ textDecoration: "none", color:"black" }}>Product</Link></li>
       </ul>
       <div className="nav-login-cart">
         {localStorage.getItem('auth-token')

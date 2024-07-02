@@ -317,3 +317,206 @@ body {
     flex-direction: column;
    }
 }
+
+
+
+.Product-Main {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 50px;
+    margin-top: 10px;
+    height: 100vh;
+    width: 97%;
+    border-radius: 10px;
+    background-color: #0093E9;
+    padding: 20px;
+    background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);
+}
+
+
+.Product-Container {
+    height: 100vh;
+    width: 50%;
+    border: 1px solid black;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+.Product-List {
+    height: 100vh;
+    width: 50%;
+    border: 1px solid black;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+  .ItemList {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: white;
+    margin: 20px;
+    border-radius: 20px;
+  }
+  
+  .ItemList input[type="text"],
+  .ItemList input[type="number"],
+  .ItemList input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .ItemList button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .ItemList button:hover {
+    background-color: #0056b3;
+  }
+  
+  .ItemList p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ff0000;
+  }
+  
+
+  .ItemList {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .table-list {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table-list th, .table-list td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .table-list th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+  
+  .table-list tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .first-column {
+    font-weight: bold;
+  }
+  
+  .table-row td img.item-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
+  
+  .table-list td button {
+    padding: 6px 12px;
+    margin: 0 4px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+  }
+  
+  .table-list td button:hover {
+    opacity: 0.8;
+  }
+  
+  .table-list td button:first-child {
+    background-color: #007bff;
+  }
+  
+  .table-list td button:last-child {
+    background-color: red;
+  }
+  
+  .table-list td button:last-child:hover {
+    background-color: darkred;
+  }
+  
+  .table-list td button[style*="background: red;"] {
+    background-color: red !important;
+  }
+  
+ 
+
+
+  @media (max-width: 768px) {
+    .Product-Main  {
+        display: block;
+        min-height: 200vh;
+    }
+    
+    .Product-Container  {
+        display: block;
+        width: 100%;
+        height: 50vh;
+    }
+
+    .Product-List {
+        height: 100vh;
+        width: 100%;
+    }
+
+   .table-list {
+    display: block;
+   }
+
+   .table-list, .table-list thead, .table-list tbody, .table-list th, .table-list td, .table-list tr {
+    display: block;
+  }
+
+  .table-list tr {
+    margin-bottom: 15px;
+  }
+
+  .table-list td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  .table-list td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 15px;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .table-list th {
+    display: none;
+  }
+
+  .table-row td img.item-img {
+    width: 100px;
+    height: 100px;
+  }
+
+
+  }
