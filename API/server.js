@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 
+
 const app = express();
 
 mongoose.connect("mongodb+srv://rajyashrajkishorsinh:Raj2329@cluster0.bu58mey.mongodb.net/nikeClone");
@@ -132,3 +133,96 @@ app.post('/signup', async (req, res) => {
     })
 
 
+// API for Products
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+const Schema = mongoose.Schema;
+
+const itemSchema = new Schema({
+  productName: String,
+  productPrice: Number,
+  category: String,
+  image: Buffer,
+  imageType: String,
+});
+
+const Item = mongoose.model('Item', itemSchema);
+
+// API endpoint for uploading an item
+app.post('/api/upload', upload.single('image'), async (req, res) => {
+  try {
+    const newItem = new Item({
+      productName: req.body.productName,
+      productPrice: req.body.productPrice,
+      category: req.body.category,
+      image: req.file.buffer,
+      imageType: req.file.mimetype,
+    });
+
+    await newItem.save();
+
+    res.status(201).json({ message: 'Item created successfully', newItem });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// API endpoint for getting all items
+app.get('/api/items', async (req, res) => {
+  try {
+    const items = await Item.find();
+    res.status(200).json(items);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// API endpoint for updating an item
+app.put('/api/items/:id', upload.single('image'), async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updateData = {
+      productName: req.body.productName,
+      productPrice: req.body.productPrice,
+      category: req.body.category,
+    };
+
+    if (req.file) {
+      updateData.image = req.file.buffer;
+      updateData.imageType = req.file.mimetype;
+    }
+
+    const updatedItem = await Item.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedItem) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    res.status(200).json({ message: 'Item updated successfully', updatedItem });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// API endpoint for deleting an item
+app.delete('/api/items/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedItem = await Item.findByIdAndDelete(id);
+
+    if (!deletedItem) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    res.status(200).json({ message: 'Item deleted successfully', deletedItem });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
