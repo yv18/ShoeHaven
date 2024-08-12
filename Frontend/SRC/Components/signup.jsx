@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link } from "react-router-dom";
 
 const LoginSignup = () => {
 
@@ -83,7 +84,7 @@ const LoginSignup = () => {
           <p className="loginsignup-login">Create an account? <span onClick={() => { setState("Sign Up") }}>Click here</span></p>
           : <p className="loginsignup-login">Already have an account? <span onClick={() => { setState("Login") }}>Login here</span></p>}
 
-          <p className="loginsignup-login"> Admin Login <a href="/Adminlogin">Click here</a></p>
+          <p className="loginsignup-login"> Admin Login <Link to="/Adminlogin" style={{ textDecoration: "none", color:"black" }}>Click here</Link></p>
 
       </div>
       <ToastContainer theme="dark" />
