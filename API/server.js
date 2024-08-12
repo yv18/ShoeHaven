@@ -223,8 +223,104 @@ app.delete("/api/items/:id", async (req, res) => {
   }
 });
 
-//Checkout and Order Managing Backend
 
+
+// Add to cart
+const CartItemSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  size: {type: String, required: true },
+  quantity: { type: Number, required: true },
+  email: { type: String, required: true },
+  image: { type: Buffer },
+  imageType: { type: String }
+});
+
+
+const CartItem = mongoose.model("CartItem", CartItemSchema);
+
+app.get('/api/cart', async (req, res) => {
+  const { email } = req.query;
+  try {
+    const cartItems = await CartItem.find({ email });
+    res.status(200).json(cartItems);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+app.delete('/api/cart', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const result = await CartItem.deleteMany({ email });
+    res.status(200).json({ message: `${result.deletedCount} items deleted.` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+app.post("/api/cart", async (req, res) => {
+  const { name, price, size, quantity, email, image, imageType } = req.body;
+  try {
+    const newCartItem = new CartItem({ name, price, quantity, size, email, image, imageType });
+    await newCartItem.save();
+    res.status(201).json(newCartItem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
+app.put("/api/cart/:id", async (req, res) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
+  try {
+    const updatedItem = await CartItem.findByIdAndUpdate(id, { quantity }, { new: true });
+    res.status(200).json(updatedItem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+app.delete("/api/cart/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await CartItem.findByIdAndDelete(id);
+    res.status(200).json({ message: "Item removed" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+app.get('/user/:email', async (req, res) => {
+  try {
+    const user = await Users.findOne({ email: req.params.email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user', error });
+    console.log("Error fetching user:", error);
+  }
+});
+
+
+
+
+//Checkout and Order Managing Backend
 const orderSchema = new Schema({
   userEmail: String,
   items: [
