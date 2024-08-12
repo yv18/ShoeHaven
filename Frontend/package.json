@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "webpack --mode development",
     "watch": "webpack -w --config Webpack.config.js",
+    "build": "webpack --mode production",
     "start": "nodemon index.js"
   },
   "author": "",
