@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import NavigationBar from "./Navbar.jsx";
 import { Buffer } from "buffer";
-import "./styles.css"; // Import the CSS file
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -11,7 +10,9 @@ function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/items");
+        const response = await fetch(
+          "http://localhost:8000/api/items/home?limit=3"
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -46,8 +47,52 @@ function Home() {
   return (
     <>
       <NavigationBar />
-      <div className="home-container">
-        <div className="banner">
+      <div className="back-home">
+        <div className="content">
+          <h1>Run Fast</h1>
+          <p>
+            Discover the latest in running gear and apparel to help you achieve
+            your fitness goals.
+          </p>
+          <a className="btn btn-warning">Shop Now</a>
+
+          <div className="container mt-4">
+            {products.length > 0 ? (
+              <div className="row">
+                {products.map((product) => (
+                  <div key={product._id} className="col-md-4">
+                    <div className="card mb-4">
+                      <img
+                        src={`data:${product.imageType};base64,${Buffer.from(
+                          product.image.data
+                        ).toString("base64")}`}
+                        className="card-img-top"
+                        alt={product.productName}
+                      />
+                      <div className="card-body">
+                        <h5 className="card-title">{product.productName}</h5>
+                        <p className="card-text">
+                          ${product.productPrice.toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No products available</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default Home;
+
+{
+  /* <div className="banner">
           <div className="banner-content">
             <h1 className="banner-title">Run Fast</h1>
             <p className="banner-subtitle">
@@ -77,10 +122,5 @@ function Home() {
           ) : (
             <p>No products available</p>
           )}
-        </div>
-      </div>
-    </>
-  );
+        </div> */
 }
-
-export default Home;

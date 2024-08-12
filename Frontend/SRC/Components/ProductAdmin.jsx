@@ -1,82 +1,142 @@
 import React, { useState } from "react";
-import NavigationBar from "./Navbar.jsx";
-import axios from 'axios';
-import ItemList from './Admin/ItemList.jsx';
+import AdminNav from "./Admin/AdminNav.jsx";
+import axios from "axios";
+import ItemList from "./Admin/ItemList.jsx";
 
+function Product({ items, handleUpdate, handleDelete, handleCancel, toggleEditing, editingItem }) {
+  const [productName, setName] = useState("");
+  const [productPrice, setPrice] = useState("");
+  const [category, setCategory] = useState("");
+  const [image, setImage] = useState(null);
+  const [message, setMessage] = useState("");
+  const [ProductDetails, setProductDetails] = useState("");
 
-function Product() {
-    const [productName, setName] = useState('');
-    const [productPrice, setPrice] = useState('');
-    const [category, setCategory] = useState('');
-    const [image, setImage] = useState(null);
-    const [message, setMessage] = useState('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-  
-      const formData = new FormData();
-      formData.append('productName', productName);
-      formData.append('productPrice', productPrice);
-      formData.append('category', category);
-      formData.append('image', image);
-  
-      try {
-        const response = await axios.post('http://localhost:8000/api/upload', formData, {
+    const formData = new FormData();
+    formData.append("productName", productName);
+    formData.append("productPrice", productPrice);
+    formData.append("category", category);
+    formData.append("image", image);
+    formData.append("ProductDetails", ProductDetails); // Include ProductDetails
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/upload",
+        formData,
+        {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
-        });
-        setMessage('Upload successful');
-        console.log('Upload successful', response.data);
-      } catch (err) {
-        setMessage('Error uploading');
-        console.error('Error uploading', err);
-      }
-    };
+        }
+      );
+      alert("Upload successful");
+      setMessage("Upload successful");
+      console.log("Upload successful", response.data);
+      setName("");
+      setPrice("");
+      setCategory("");
+      setImage(null);
+      setProductDetails("");
+      window.location.reload()
+    } catch (err) {
+      setMessage("Error uploading");
+      console.error("Error uploading", err);
+    }
+  };
 
-    return (
-      <>
-        <NavigationBar />
-        <div className="Product-Main">
-          <div className="Product-Container">
-            <form className='ItemList' onSubmit={handleSubmit}>
-                <h1 style={{textAlign:'center'}}>Add Product</h1>
-              <input
-                type="text"
-                value={productName}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter Name"
-                required
-              />
-              <input
-                type="number"
-                value={productPrice}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="Enter Price"
-                required
-              />
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Enter Category"
-                required
-              />
-              <input
-                type="file"
-                onChange={(e) => setImage(e.target.files[0])}
-                required
-              />
-              <button type="submit">Upload</button>
-              {message && <p>{message}</p>}
+  return (
+    <>
+      <AdminNav />
+      <div className="container my-5">
+        <div className="row">
+          <div className="col-md-6">
+            <form className="card p-4" onSubmit={handleSubmit}>
+              <h1 className="text-center">Add Product</h1>
+              <div className="form-group">
+                <label htmlFor="productName">Name</label>
+                <input
+                  type="text"
+                  id="productName"
+                  className="form-control"
+                  value={productName}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter Name"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="productPrice">Price</label>
+                <input
+                  type="number"
+                  id="productPrice"
+                  className="form-control"
+                  value={productPrice}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="Enter Price"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="category">Category</label>
+                <input
+                  type="text"
+                  id="category"
+                  className="form-control"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="Enter Category"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="image">Image</label> <br />
+                <input
+                  type="file"
+                  id="image"
+                  className="form-control-file"
+                  onChange={(e) => setImage(e.target.files[0])}
+                  required
+                  style={{ marginBottom: "10px" }}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="ProductDetails">Details</label>
+                <textarea
+                  id="ProductDetails"
+                  className="form-control"
+                  value={ProductDetails}
+                  onChange={(e) => setProductDetails(e.target.value)}
+                  placeholder="Enter Product Details"
+                  rows="4"
+                ></textarea>
+              </div>
+              <button type="submit" className="btn btn-dark">
+                Upload
+              </button>
+              {message && <div className="alert alert-info mt-3">{message}</div>}
             </form>
           </div>
-
-          <div className="Product-List">
-                <ItemList/>
+          <div className="col-md-6">
+            <div
+              className="card p-4"
+              style={{ maxHeight: "500px", overflowY: "auto" }}
+            >
+              <ItemList
+                items={items}
+                toggleEditing={toggleEditing}
+                handleDelete={handleDelete}
+                editingItem={editingItem}
+                handleUpdate={handleUpdate}
+                handleCancel={handleCancel}
+              />
+            </div>
           </div>
         </div>
-      </>
-    );
+      </div>
+    </>
+  );
 }
+
 export default Product;

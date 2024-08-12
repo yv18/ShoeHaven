@@ -43,9 +43,9 @@ const ItemList = () => {
   };
 
   return (
-    <div className='ItemList'>
-      <table className='table-list'>
-        <thead>
+    <>
+    <table className="table table-striped table-bordered">
+        <thead className="thead-dark">
           <tr>
             <th>Product Name</th>
             <th>Category</th>
@@ -57,32 +57,35 @@ const ItemList = () => {
         </thead>
         <tbody>
           {items.map((item) => (
-            <tr className='table-row' key={item._id}>
-              <td className='first-column'>{item.productName}</td>
+            <tr key={item._id}>
+              <td>{item.productName}</td>
               <td>{item.category}</td>
               <td>
                 {item.image && (
                   <img
                     src={`data:${item.imageType};base64,${Buffer.from(item.image.data).toString('base64')}`}
-                    className="item-img"
+                    className="img-thumbnail"
                     alt="item"
+                    style={{ width: '50px', height: '50px' }}
                   />
                 )}
               </td>
               <td>{item.quantity || 100}</td>
               <td>{item.productPrice ? `$${item.productPrice}` : '$148.99'}</td>
-              <td className='last-column'>
-                <button onClick={() => toggleEditing(item)}>Update</button>
-                <button style={{ background: 'red' }} onClick={() => handleDelete(item._id)}>Delete</button>
+              <td>
+                <button className="btn btn-primary btn-sm mr-2" style={{marginBottom:'10px'}} onClick={() => toggleEditing(item)}>Update</button>
+                <button className="btn btn-danger btn-sm" style={{marginBottom:'10px'}} onClick={() => handleDelete(item._id)}>Delete</button>
                 {editingItem && editingItem._id === item._id && (
-                  <UpdateItem item={item} onUpdate={handleUpdate} onCancel={handleCancel} />
+                  <div className="mt-3">
+                    <UpdateItem item={item} onUpdate={handleUpdate} onCancel={handleCancel} />
+                  </div>
                 )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-    </div>
+  </>
   );
 };
 
