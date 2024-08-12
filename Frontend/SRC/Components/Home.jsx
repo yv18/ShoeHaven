@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NavigationBar from "./Navbar.jsx";
 import { Buffer } from "buffer";
-import "./styles.css"; // Import the CSS file
+
 
 function Home() {
   const [products, setProducts] = useState([]);
