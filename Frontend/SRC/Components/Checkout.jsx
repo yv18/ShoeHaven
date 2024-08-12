@@ -24,7 +24,7 @@ function Checkout() {
 
   const deleteCartItems = async (email) => {
     try {
-      const response = await axios.delete("http://localhost:8000/api/cart", {
+      const response = await axios.delete("https://shoehaven-backend.onrender.com/api/cart", {
         data: { email },
       });
       console.log(response.data.message);
@@ -125,7 +125,7 @@ function Checkout() {
         totalPrice,
         ...formData,
       };
-      await axios.post("http://localhost:8000/api/orders", orderData);
+      await axios.post("https://shoehaven-backend.onrender.com/api/orders", orderData);
       const mail = localStorage.getItem("user-email");
       deleteCartItems(mail);
       alert("Order placed successfully!");
