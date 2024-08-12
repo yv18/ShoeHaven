@@ -1,34 +1,82 @@
-import React from 'react'
-import NavigationBar from "./Navbar.jsx";
-
+import React, { useState, useEffect } from "react";
+import ManageOrder from "./Admin/ManageOrder.jsx";
+import AdminNav from "./Admin/AdminNav.jsx";
 
 function Admin() {
-      const TotalRevenue = `$${45000}`;
-      const TotalOrders = `999`;
-      const TotalReturn = `01`;
-      const TotalUser = `99999`;
+  const [totalRevenue, setTotalRevenue] = useState("");
+  const [totalOrders, setTotalOrders] = useState("");
+  const [totalReturns, setTotalReturns] = useState("");
+  const [totalUsers, setTotalUsers] = useState("");
 
-    return (
-      <>
-        <NavigationBar />
-        <div className='Admin-Container'>
-            <div className="top4">
-                <div className="top1">
-                  <h2>Total Revenue {TotalRevenue}</h2>
-                </div>
-                <div className="top1">
-                  <h2>Total Orders {TotalOrders}</h2>
-                </div>
-                <div className="top1">
-                  <h2>Total Return {TotalReturn} </h2>
-                </div>
-                <div className="top1">
-                  <h2>Total User {TotalUser}</h2>
-                </div>
+  useEffect(() => {
+    // Fetch Total Revenue
+    fetch("http://localhost:8000/api/total-revenue")
+      .then((res) => res.json())
+      .then((data) => setTotalRevenue(`$${data.totalRevenue}`))
+      .catch((err) => console.error("Error fetching total revenue:", err));
+
+    // Fetch Total Orders
+    fetch("http://localhost:8000/api/total-orders")
+      .then((res) => res.json())
+      .then((data) => setTotalOrders(data.totalOrders))
+      .catch((err) => console.error("Error fetching total orders:", err));
+
+    // Fetch Total Returns
+    fetch("http://localhost:8000/api/total-returns")
+      .then((res) => res.json())
+      .then((data) => setTotalReturns(data.totalReturns))
+      .catch((err) => console.error("Error fetching total returns:", err));
+
+    // Fetch Total Users
+    fetch("http://localhost:8000/api/total-users")
+      .then((res) => res.json())
+      .then((data) => setTotalUsers(data.totalUsers))
+      .catch((err) => console.error("Error fetching total users:", err));
+  }, []);
+
+  return (
+    <>
+      <AdminNav />
+      <div className="container" style={{ marginTop: '10%' }}>
+        <div className="row">
+          <div className="col-md-3">
+            <div className="card text-center">
+              <div className="card-body">
+                <h2 className="card-title">Total Revenue</h2>
+                <p className="card-text">{totalRevenue}</p>
+              </div>
             </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card text-center">
+              <div className="card-body">
+                <h2 className="card-title">Total Orders</h2>
+                <p className="card-text">{totalOrders}</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card text-center">
+              <div className="card-body">
+                <h2 className="card-title">Total Return</h2>
+                <p className="card-text">{totalReturns}</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card text-center">
+              <div className="card-body">
+                <h2 className="card-title">Total User</h2>
+                <p className="card-text">{totalUsers}</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </>
-    );
-  }
-  export default Admin;
-  
+      </div>
+
+      <ManageOrder />
+    </>
+  );
+}
+
+export default Admin;
