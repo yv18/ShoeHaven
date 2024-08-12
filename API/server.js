@@ -228,3 +228,85 @@ app.delete("/api/items/:id", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+//ReturnOrderPage//
+
+const returnOrderSchema = new mongoose.Schema({
+  orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true },
+  productName: { type: String, required: true },
+  userEmail: { type: String, required: true },
+  returnRequested: { type: Boolean, default: false },
+  returnReason: { type: String, required: false },
+  status: { type: String },
+});
+
+const ReturnOrder = mongoose.model('ReturnOrder', returnOrderSchema);
+
+app.post('/api/return', async (req, res) => {
+  const { orderId, productName, returnRequested, userEmail, returnReason } = req.body;
+  try {
+    const newReturnOrder = new ReturnOrder({ orderId,productName, userEmail, returnRequested, returnReason });
+    await newReturnOrder.save();
+    res.status(201).json({ message: 'Return request created successfully', returnOrder: newReturnOrder });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create return request' });
+  }
+});
+
+
+app.put('/api/order/:id/return', async (req, res) => {
+  const { id } = req.params;
+  const { returnRequested, returnReason } = req.body;
+  try {
+    const order = await Order.findById(id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    if (returnRequested) {
+      for (const item of order.items) {
+        const newReturnOrder = new ReturnOrder({
+          orderId: order._id,
+          userEmail: order.userEmail,
+          productName: item.productName,
+          returnReason
+        });
+        await newReturnOrder.save();
+      }
+    }
+
+    order.returnRequested = returnRequested;
+    order.returnReason = returnReason;
+    const updatedOrder = await order.save();
+
+    res.json({ message: 'Order updated successfully', order: updatedOrder });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update order' });
+  }
+});
+
+
+app.get('/api/return-orders', async (req, res) => {
+  try {
+    const returnOrders = await ReturnOrder.find();
+    res.json(returnOrders);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch return orders' });
+  }
+});
+
+// Update return order status
+app.put('/api/return-order/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  try {
+    const updatedReturnOrder = await ReturnOrder.findByIdAndUpdate(id, { status }, { new: true });
+    if (!updatedReturnOrder) {
+      console.error('Return order not found'); // Log error
+      return res.status(404).json({ message: 'Return order not found' });
+    }
+    console.log('Return order status updated:', updatedReturnOrder); // Log success
+    res.json({ message: 'Return order status updated successfully', returnOrder: updatedReturnOrder });
+  } catch (error) {
+    console.error('Failed to update return order status:', error); // Log error
+    res.status(500).json({ error: 'Failed to update return order status' });
+  }
+});
