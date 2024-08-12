@@ -11,7 +11,7 @@ function Home() {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/api/items/home?limit=3"
+          "https://shoehaven-backend.onrender.com/api/items/home?limit=3"
         );
 
         if (!response.ok) {
