@@ -17,7 +17,7 @@ function Store() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/items");
+        const response = await axios.get("https://shoehaven-backend.onrender.com/api/items");
         if (Array.isArray(response.data)) {
           setProducts(response.data);
         } else {
@@ -66,7 +66,7 @@ function Store() {
         quantity: 1,
         size: selectedSize
       };
-      await axios.post("http://localhost:8000/api/cart", cartItem);
+      await axios.post("https://shoehaven-backend.onrender.com/api/cart", cartItem);
       alert("Item added to cart!");
       handleCloseModal();
     } catch (error) {
@@ -95,7 +95,7 @@ function Store() {
         quantity: 1,
         size: selectedSize
       };
-      await axios.post("http://localhost:8000/api/wishlist", wishlistItem);
+      await axios.post("https://shoehaven-backend.onrender.com/api/wishlist", wishlistItem);
       alert("Item added to wishlist!");
       handleCloseModal();
     } catch (error) {
