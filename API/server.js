@@ -557,3 +557,104 @@ app.put("/api/return-order/:id/status", async (req, res) => {
     res.status(500).json({ error: "Failed to update return order status" });
   }
 });
+
+
+
+// wishlist
+const wishlistItemSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  size: {type: String, required: true },
+  quantity: { type: Number, required: true },
+  email: { type: String, required: true },
+  image: { type: Buffer },
+  imageType: { type: String }
+});
+
+
+const wishlistItem = mongoose.model("wishlistItem", wishlistItemSchema);
+
+app.get('/api/wishlist', async (req, res) => {
+  const { email } = req.query;
+  try {
+    const wishlistItems = await wishlistItem.find({ email });
+    res.status(200).json(wishlistItems);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+app.delete('/api/wishlist', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const result = await wishlistItem.deleteMany({ email });
+    res.status(200).json({ message: `${result.deletedCount} items deleted.` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+app.post("/api/wishlist", async (req, res) => {
+  const { name, price, size, quantity, email, image, imageType } = req.body;
+  try {
+    const newWishlistItem = new wishlistItem({ name, price, quantity, size, email, image, imageType });
+    await newWishlistItem.save();
+    res.status(201).json(newWishlistItem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
+
+app.put("/api/wishlist/:id", async (req, res) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
+  try {
+    const updatedItem = await wishlistItem.findByIdAndUpdate(id, { quantity }, { new: true });
+    res.status(200).json(updatedItem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+app.delete('/api/wishlist/:id', async (req, res) => {
+  try {
+    const result = await wishlistItem.findByIdAndDelete(req.params.id);
+    if (result) {
+      res.status(200).json({ message: "Item deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Item not found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
+app.get('/user/:email', async (req, res) => {
+  try {
+    const user = await Users.findOne({ email: req.params.email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user', error });
+    console.log("Error fetching user:", error);
+  }
+});
