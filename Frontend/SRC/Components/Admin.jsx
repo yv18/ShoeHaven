@@ -10,25 +10,25 @@ function Admin() {
 
   useEffect(() => {
     // Fetch Total Revenue
-    fetch("http://localhost:8000/api/total-revenue")
+    fetch("https://shoehaven-backend.onrender.com/api/total-revenue")
       .then((res) => res.json())
       .then((data) => setTotalRevenue(`$${data.totalRevenue}`))
       .catch((err) => console.error("Error fetching total revenue:", err));
 
     // Fetch Total Orders
-    fetch("http://localhost:8000/api/total-orders")
+    fetch("https://shoehaven-backend.onrender.com/api/total-orders")
       .then((res) => res.json())
       .then((data) => setTotalOrders(data.totalOrders))
       .catch((err) => console.error("Error fetching total orders:", err));
 
     // Fetch Total Returns
-    fetch("http://localhost:8000/api/total-returns")
+    fetch("https://shoehaven-backend.onrender.com/api/total-returns")
       .then((res) => res.json())
       .then((data) => setTotalReturns(data.totalReturns))
       .catch((err) => console.error("Error fetching total returns:", err));
 
     // Fetch Total Users
-    fetch("http://localhost:8000/api/total-users")
+    fetch("https://shoehaven-backend.onrender.com/api/total-users")
       .then((res) => res.json())
       .then((data) => setTotalUsers(data.totalUsers))
       .catch((err) => console.error("Error fetching total users:", err));
