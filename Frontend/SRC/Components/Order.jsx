@@ -11,7 +11,7 @@ const OrderPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`https://shoehaven-backend.onrender.com/api/order?userEmail=${email}`);
+        const response = await axios.get(`http://localhost:8000/api/order?userEmail=${email}`);
         setOrders(response.data);
       } catch (err) {
         setError(err.message || 'Failed to fetch orders.');
@@ -29,10 +29,10 @@ const OrderPage = () => {
     try {
       const order = orders.find(order => order._id === id);
       const returnRequested = !order.returnRequested;
-      await axios.put(`https://shoehaven-backend.onrender.com/api/order/${id}/return, {
+      await axios.put(`http://localhost:8000/api/order/${id}/return`, {
         returnRequested,
         returnReason: order.returnReason,
-      }`);
+      });
       
       setOrders(orders.map(order =>
         order._id === id ? { ...order, returnRequested, status: 'Pending' } : order
@@ -44,10 +44,10 @@ const OrderPage = () => {
 
   const handleReasonChange = async (id, reason) => {
     try {
-      await axios.put(`https://shoehaven-backend.onrender.com/api/order/${id}/return, {
+      await axios.put(`http://localhost:8000/api/order/${id}/return`, {
         returnRequested: true,
         returnReason: reason,
-      }`);
+      });
       
       setOrders(orders.map(order =>
         order._id === id ? { ...order, returnReason: reason } : order
@@ -136,4 +136,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default OrderPage;
