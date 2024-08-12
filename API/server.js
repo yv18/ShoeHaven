@@ -658,3 +658,52 @@ app.get('/user/:email', async (req, res) => {
     console.log("Error fetching user:", error);
   }
 });
+
+
+
+// Admin Dashboard
+// API endpoint to get total revenue
+app.get('/api/total-revenue', async (req, res) => {
+  try {
+    const totalRevenue = await Order.aggregate([
+      { $group: { _id: null, totalRevenue: { $sum: "$totalPrice" } } }
+    ]);
+    res.json({ totalRevenue: totalRevenue[0].totalRevenue });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch total revenue" });
+  }
+});
+
+// API endpoint to get total orders
+app.get('/api/total-orders', async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    res.json({ totalOrders });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch total orders" });
+  }
+});
+
+// API endpoint to get total returns
+app.get('/api/total-returns', async (req, res) => {
+  try {
+    const totalReturns = await ReturnOrder.countDocuments();
+    res.json({ totalReturns });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch total returns" });
+  }
+});
+
+// API endpoint to get total users
+app.get('/api/total-users', async (req, res) => {
+  try {
+    const totalUsers = await Users.countDocuments();
+    res.json({ totalUsers });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch total users" });
+  }
+});
