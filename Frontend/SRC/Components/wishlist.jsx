@@ -17,7 +17,7 @@ function Wishlist() {
       }
 
       try {
-        const response = await axios.get(`http://localhost:8000/api/wishlist`, {
+        const response = await axios.get(`https://shoehaven-backend.onrender.com/api/wishlist`, {
           params: { email: storedEmail }
         });
 
@@ -38,7 +38,7 @@ function Wishlist() {
 
   const handleRemoveFromWishlist = async (itemId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/wishlist/${itemId}`);
+      await axios.delete(`https://shoehaven-backend.onrender.com/api/wishlist/${itemId}`);
       setWishlistItems(wishlistItems.filter(item => item._id !== itemId));
       alert("Item removed from wishlist!");
     } catch (error) {
@@ -66,7 +66,7 @@ function Wishlist() {
     };
 
     try {
-      await axios.post('http://localhost:8000/api/cart', cartItem);
+      await axios.post('https://shoehaven-backend.onrender.com/api/cart', cartItem);
       alert('Item moved to cart successfully!');
       
       // Optionally, remove the item from the wishlist after moving it to the cart
