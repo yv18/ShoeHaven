@@ -24,17 +24,16 @@ function NavigationBar() {
       </Link>
       <img onClick={dropdownBtn} className="nav-dropdown" src={nav_dropdown} alt="dropdown" />
       <ul ref={menuRef} className="nav-menu">
-        <li><Link to="/" style={{ textDecoration: "none", color:"black" }}>All</Link></li>
-        <li><Link to="/Men" style={{ textDecoration: "none", color:"black" }}>Men</Link></li>
-        <li><Link to="/Female" style={{ textDecoration: "none", color:"black" }}>Women</Link></li>
-        <li><Link to="/Product" style={{ textDecoration: "none", color:"black" }}>Product</Link></li>
+        <li><Link to="/" style={{ textDecoration: "none", color:"black" }}>Home</Link></li>
+        <li><Link to="/Store" style={{ textDecoration: "none", color:"black" }}>Store</Link></li>
+        <li><Link to="/wishlist" style={{ textDecoration: "none", color:"black" }}>Wishlist</Link></li>
+        <li><Link to="/Cart" style={{ textDecoration: "none", color:"black" }}>Cart</Link></li>
+        <li><Link to="/OrderPage" style={{ textDecoration: "none", color:"black" }}>Order</Link></li>        
       </ul>
       <div className="nav-login-cart">
         {localStorage.getItem('auth-token')
           ? <button onClick={handleLogout}>Logout</button>
           : <Link to="/login" style={{ textDecoration: "none" }}><button>Login</button></Link>}
-        <Link to="/cart"><img src={cart_icon} alt="cart" /></Link>
-        <div className="nav-cart-count">0</div>
       </div>
     </div>
   );
