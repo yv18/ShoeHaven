@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
+const { type } = require("os");
 
 const app = express();
 
@@ -79,16 +80,20 @@ app.post("/login", async (req, res) => {
       const token = jwt.sign(data, "secret_ecom");
       res.json({ success, token });
     } else {
-      return res.status(400).json({
+      return res
+        .status(400)
+        .json({
+          success: success,
+          errors: "please try with correct email/password",
+        });
+    }
+  } else {
+    return res
+      .status(400)
+      .json({
         success: success,
         errors: "please try with correct email/password",
       });
-    }
-  } else {
-    return res.status(400).json({
-      success: success,
-      errors: "please try with correct email/password",
-    });
   }
 });
 
@@ -99,10 +104,12 @@ app.post("/signup", async (req, res) => {
 
   let check = await Users.findOne({ email: req.body.email });
   if (check) {
-    return res.status(400).json({
-      success: success,
-      errors: "existing user found with this email",
-    });
+    return res
+      .status(400)
+      .json({
+        success: success,
+        errors: "existing user found with this email",
+      });
   }
 
   let cart = {};
@@ -139,9 +146,12 @@ const itemSchema = new Schema({
   category: String,
   image: Buffer,
   imageType: String,
+  ProductDetails: String,
 });
 
 const Item = mongoose.model("Item", itemSchema);
+
+
 
 // API endpoint for uploading an item
 app.post("/api/upload", upload.single("image"), async (req, res) => {
@@ -150,6 +160,7 @@ app.post("/api/upload", upload.single("image"), async (req, res) => {
       productName: req.body.productName,
       productPrice: req.body.productPrice,
       category: req.body.category,
+      ProductDetails: req.body.ProductDetails,
       image: req.file.buffer,
       imageType: req.file.mimetype,
     });
@@ -223,6 +234,16 @@ app.delete("/api/items/:id", async (req, res) => {
   }
 });
 
+
+app.get('/api/items/home', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 0; // Default to 0 if not specified
+    const items = await Item.find().limit(limit);
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch items' });
+  }
+});
 
 
 // Add to cart
@@ -318,19 +339,14 @@ app.get('/user/:email', async (req, res) => {
 });
 
 
-
-
-//Checkout and Order Managing Backend
 const orderSchema = new Schema({
   userEmail: String,
-  items: [
-    {
-      productId: { type: Schema.Types.ObjectId, ref: "CartItem" },
-      quantity: Number,
-      productName: String,
-      price: Number,
-    },
-  ],
+  items: [{
+    productId: { type: Schema.Types.ObjectId, ref: 'CartItem' },
+    quantity: Number,
+    productName: String,
+    price: Number,
+  }],
   totalItems: Number,
   totalPrice: Number,
   orderDate: { type: Date, default: Date.now },
@@ -346,21 +362,31 @@ const orderSchema = new Schema({
   status: String,
 });
 
-const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.model('Order', orderSchema);
+
+
+
+
+
 
 // Fetch Orders by Email Endpoint
-app.get("/api/order", async (req, res) => {
+app.get('/api/order', async (req, res) => {
   const { userEmail } = req.query;
   try {
     const orders = await Order.find({ userEmail });
     console.log(`Orders found: ${orders}`);
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch orders" });
+    res.status(500).json({ error: 'Failed to fetch orders' });
   }
 });
 
-app.get("/api/orders", async (req, res) => {
+
+
+
+
+
+app.get('/api/orders', async (req, res) => {
   try {
     const orders = await Order.find();
     res.json(orders);
@@ -369,7 +395,12 @@ app.get("/api/orders", async (req, res) => {
   }
 });
 
-app.put("/api/orders/:id", async (req, res) => {
+
+
+
+
+
+app.put('/api/orders/:id', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -381,7 +412,7 @@ app.put("/api/orders/:id", async (req, res) => {
     );
 
     if (!updatedOrder) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({ message: 'Order not found' });
     }
 
     res.json(updatedOrder);
@@ -390,7 +421,8 @@ app.put("/api/orders/:id", async (req, res) => {
   }
 });
 
-app.post("/api/orders", async (req, res) => {
+
+app.post('/api/orders', async (req, res) => {
   const {
     userEmail,
     items,
@@ -404,7 +436,7 @@ app.post("/api/orders", async (req, res) => {
     cardNumber,
     cardCVV,
     cardExpiry,
-    cardHolderName,
+    cardHolderName
   } = req.body;
 
   try {
@@ -421,21 +453,22 @@ app.post("/api/orders", async (req, res) => {
       cardNumber,
       cardCVV,
       cardExpiry,
-      cardHolderName,
+      cardHolderName
     });
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({ error: "Failed to place order" });
+    console.error('Error placing order:', error);
+    res.status(500).json({ error: 'Failed to place order' });
   }
 });
 
-app.delete("/api/cart", async (req, res) => {
+
+app.delete('/api/cart', async (req, res) => {
   const { email } = req.query;
 
   if (!email) {
-    return res.status(400).send({ message: "Email is required" });
+    return res.status(400).send({ message: 'Email is required' });
   }
 
   try {
@@ -443,26 +476,20 @@ app.delete("/api/cart", async (req, res) => {
     const result = await Cart.deleteMany({ email });
 
     if (result.deletedCount === 0) {
-      return res
-        .status(404)
-        .send({ message: "No cart items found for this user" });
+      return res.status(404).send({ message: 'No cart items found for this user' });
     }
 
-    res.status(200).send({ message: "Cart cleared successfully" });
+    res.status(200).send({ message: 'Cart cleared successfully' });
   } catch (error) {
-    console.error("Error clearing cart:", error); // Log error for debugging
-    res.status(500).send({ message: "Failed to clear cart" });
+    console.error('Error clearing cart:', error); // Log error for debugging
+    res.status(500).send({ message: 'Failed to clear cart' });
   }
 });
 
-//ReturnOrderPage//
+
 
 const returnOrderSchema = new mongoose.Schema({
-  orderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Order",
-    required: true,
-  },
+  orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true },
   productName: { type: String, required: true },
   userEmail: { type: String, required: true },
   returnRequested: { type: Boolean, default: false },
@@ -470,37 +497,26 @@ const returnOrderSchema = new mongoose.Schema({
   status: { type: String },
 });
 
-const ReturnOrder = mongoose.model("ReturnOrder", returnOrderSchema);
+const ReturnOrder = mongoose.model('ReturnOrder', returnOrderSchema);
 
-app.post("/api/return", async (req, res) => {
-  const { orderId, productName, returnRequested, userEmail, returnReason } =
-    req.body;
+app.post('/api/return', async (req, res) => {
+  const { orderId, productName, returnRequested, userEmail, returnReason } = req.body;
   try {
-    const newReturnOrder = new ReturnOrder({
-      orderId,
-      productName,
-      userEmail,
-      returnRequested,
-      returnReason,
-    });
+    const newReturnOrder = new ReturnOrder({ orderId,productName, userEmail, returnRequested, returnReason });
     await newReturnOrder.save();
-    res
-      .status(201)
-      .json({
-        message: "Return request created successfully",
-        returnOrder: newReturnOrder,
-      });
+    res.status(201).json({ message: 'Return request created successfully', returnOrder: newReturnOrder });
   } catch (error) {
-    res.status(500).json({ error: "Failed to create return request" });
+    res.status(500).json({ error: 'Failed to create return request' });
   }
 });
 
-app.put("/api/order/:id/return", async (req, res) => {
+
+app.put('/api/order/:id/return', async (req, res) => {
   const { id } = req.params;
   const { returnRequested, returnReason } = req.body;
   try {
     const order = await Order.findById(id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) return res.status(404).json({ message: 'Order not found' });
 
     if (returnRequested) {
       for (const item of order.items) {
@@ -508,7 +524,7 @@ app.put("/api/order/:id/return", async (req, res) => {
           orderId: order._id,
           userEmail: order.userEmail,
           productName: item.productName,
-          returnReason,
+          returnReason
         });
         await newReturnOrder.save();
       }
@@ -518,46 +534,89 @@ app.put("/api/order/:id/return", async (req, res) => {
     order.returnReason = returnReason;
     const updatedOrder = await order.save();
 
-    res.json({ message: "Order updated successfully", order: updatedOrder });
+    res.json({ message: 'Order updated successfully', order: updatedOrder });
   } catch (error) {
-    res.status(500).json({ error: "Failed to update order" });
+    res.status(500).json({ error: 'Failed to update order' });
   }
 });
 
-app.get("/api/return-orders", async (req, res) => {
+
+app.get('/api/return-orders', async (req, res) => {
   try {
     const returnOrders = await ReturnOrder.find();
     res.json(returnOrders);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch return orders" });
+    res.status(500).json({ error: 'Failed to fetch return orders' });
   }
 });
 
 // Update return order status
-app.put("/api/return-order/:id/status", async (req, res) => {
+app.put('/api/return-order/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   try {
-    const updatedReturnOrder = await ReturnOrder.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
+    const updatedReturnOrder = await ReturnOrder.findByIdAndUpdate(id, { status }, { new: true });
     if (!updatedReturnOrder) {
-      console.error("Return order not found"); // Log error
-      return res.status(404).json({ message: "Return order not found" });
+      console.error('Return order not found'); // Log error
+      return res.status(404).json({ message: 'Return order not found' });
     }
-    console.log("Return order status updated:", updatedReturnOrder); // Log success
-    res.json({
-      message: "Return order status updated successfully",
-      returnOrder: updatedReturnOrder,
-    });
+    console.log('Return order status updated:', updatedReturnOrder); // Log success
+    res.json({ message: 'Return order status updated successfully', returnOrder: updatedReturnOrder });
   } catch (error) {
-    console.error("Failed to update return order status:", error); // Log error
-    res.status(500).json({ error: "Failed to update return order status" });
+    console.error('Failed to update return order status:', error); // Log error
+    res.status(500).json({ error: 'Failed to update return order status' });
   }
 });
 
+
+
+
+// Admin Dashboard
+// API endpoint to get total revenue
+app.get('/api/total-revenue', async (req, res) => {
+  try {
+    const totalRevenue = await Order.aggregate([
+      { $group: { _id: null, totalRevenue: { $sum: "$totalPrice" } } }
+    ]);
+    res.json({ totalRevenue: totalRevenue[0].totalRevenue });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch total revenue" });
+  }
+});
+
+// API endpoint to get total orders
+app.get('/api/total-orders', async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    res.json({ totalOrders });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch total orders" });
+  }
+});
+
+// API endpoint to get total returns
+app.get('/api/total-returns', async (req, res) => {
+  try {
+    const totalReturns = await ReturnOrder.countDocuments();
+    res.json({ totalReturns });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch total returns" });
+  }
+});
+
+// API endpoint to get total users
+app.get('/api/total-users', async (req, res) => {
+  try {
+    const totalUsers = await Users.countDocuments();
+    res.json({ totalUsers });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch total users" });
+  }
+});
 
 
 // wishlist
@@ -656,54 +715,5 @@ app.get('/user/:email', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user', error });
     console.log("Error fetching user:", error);
-  }
-});
-
-
-
-// Admin Dashboard
-// API endpoint to get total revenue
-app.get('/api/total-revenue', async (req, res) => {
-  try {
-    const totalRevenue = await Order.aggregate([
-      { $group: { _id: null, totalRevenue: { $sum: "$totalPrice" } } }
-    ]);
-    res.json({ totalRevenue: totalRevenue[0].totalRevenue });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch total revenue" });
-  }
-});
-
-// API endpoint to get total orders
-app.get('/api/total-orders', async (req, res) => {
-  try {
-    const totalOrders = await Order.countDocuments();
-    res.json({ totalOrders });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch total orders" });
-  }
-});
-
-// API endpoint to get total returns
-app.get('/api/total-returns', async (req, res) => {
-  try {
-    const totalReturns = await ReturnOrder.countDocuments();
-    res.json({ totalReturns });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch total returns" });
-  }
-});
-
-// API endpoint to get total users
-app.get('/api/total-users', async (req, res) => {
-  try {
-    const totalUsers = await Users.countDocuments();
-    res.json({ totalUsers });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch total users" });
   }
 });
