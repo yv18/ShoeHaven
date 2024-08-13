@@ -15,7 +15,9 @@ mongoose.connect(
 
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'https://shoehaven.onrender.com',
+}));
 
 app.get("/", (req, res) => {
   res.send("API is working");
