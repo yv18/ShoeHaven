@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NavigationBar from "./Navbar.jsx";
 import { Buffer } from "buffer";
+import { Link } from "react-router-dom";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -54,7 +55,7 @@ function Home() {
             Discover the latest in running gear and apparel to help you achieve
             your fitness goals.
           </p>
-          <a className="btn btn-warning">Shop Now</a>
+          <Link to="/Store" ><a className="btn btn-warning">Shop Now</a></Link>
 
           <div className="container mt-4">
             {products.length > 0 ? (
