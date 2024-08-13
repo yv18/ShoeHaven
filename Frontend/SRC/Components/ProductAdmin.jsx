@@ -39,7 +39,6 @@ function Product({ items, handleUpdate, handleDelete, handleCancel, toggleEditin
       setCategory("");
       setImage(null);
       setProductDetails("");
-      window.location.reload()
     } catch (err) {
       setMessage("Error uploading");
       console.error("Error uploading", err);
