@@ -8,7 +8,7 @@ function ManageOrder() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/orders'); // Adjust the endpoint if needed
+        const response = await axios.get('https://shoehaven-backend.onrender.com/api/orders'); // Adjust the endpoint if needed
         console.log(response.data); // Log the fetched data for debugging
         setOrders(response.data);
       } catch (error) {
@@ -30,7 +30,7 @@ function ManageOrder() {
     });
     setOrders(updatedOrders);
     try {
-      await axios.put(`http://localhost:8000/api/orders/${orderId}`, { status: updatedStatus });
+      await axios.put(`https://shoehaven-backend.onrender.com/api/orders/${orderId}`, { status: updatedStatus });
       alert("Update successfully");
     } catch (error) {
       console.error("There was an error updating the order status!", error);
